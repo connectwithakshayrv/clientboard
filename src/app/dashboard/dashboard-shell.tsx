@@ -38,7 +38,6 @@ export default function DashboardShell({
   userEmail: string;
   userFullName: string;
 }) {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
@@ -391,7 +390,8 @@ function ClientsTab({
   addToast: (msg: string, type: "success" | "error") => void;
 }) {
   async function copyLink(slug: string) {
-    const url = `https://clientboard.app/portal/${slug}`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const url = `${baseUrl}/portal/${slug}`;
     try {
       await navigator.clipboard.writeText(url);
       addToast("Link copied to clipboard!", "success");

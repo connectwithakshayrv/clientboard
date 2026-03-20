@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase-server";
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import FeedbackForm from "./feedback-form";
 import type { Metadata } from "next";
