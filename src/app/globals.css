@@ -2,26 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ===========================
+   GLOBAL STYLES
+   =========================== */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-slate-800 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* ===========================
+   CUSTOM UTILITIES
+   =========================== */
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-r from-primary-600 to-accent-600;
+  }
+
+  .gradient-bg-subtle {
+    @apply bg-gradient-to-br from-primary-50 via-white to-accent-50;
+  }
+}
+
+/* ===========================
+   SMOOTH SECTION TRANSITIONS
+   =========================== */
+
+section {
+  @apply relative;
+}
+
+/* ===========================
+   CUSTOM SCROLLBAR
+   =========================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* ===========================
+   SELECTION STYLE
+   =========================== */
+
+::selection {
+  @apply bg-primary-200 text-primary-900;
 }
