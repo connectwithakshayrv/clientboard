@@ -356,20 +356,35 @@ function Footer() {
             </p>
           </div>
 
-          {[
-            { title: "Product", links: ["Features", "Pricing", "Integrations", "Changelog"] },
-            { title: "Company", links: ["About", "Blog", "Careers", "Contact"] },
-            { title: "Legal", links: ["Privacy Policy", "Terms of Service", "Refund Policy"] },
-          ].map((section) => (
-            <div key={section.title}>
-              <h4 className="text-sm font-semibold text-warm-text-primary uppercase tracking-wider mb-4">{section.title}</h4>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link}><a href="#" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">{link}</a></li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Product */}
+          <div>
+            <h4 className="text-sm font-semibold text-warm-text-primary uppercase tracking-wider mb-4">Product</h4>
+            <ul className="space-y-3">
+              <li><a href="/#how-it-works" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Features</a></li>
+              <li><a href="/pricing" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Pricing</a></li>
+              <li><a href="#" title="Coming soon" className="text-sm text-warm-text-secondary/50 cursor-not-allowed">Integrations</a></li>
+              <li><a href="#" title="Coming soon" className="text-sm text-warm-text-secondary/50 cursor-not-allowed">Changelog</a></li>
+            </ul>
+          </div>
+          {/* Company */}
+          <div>
+            <h4 className="text-sm font-semibold text-warm-text-primary uppercase tracking-wider mb-4">Company</h4>
+            <ul className="space-y-3">
+              <li><a href="/contact" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">About</a></li>
+              <li><a href="#" title="Coming soon" className="text-sm text-warm-text-secondary/50 cursor-not-allowed">Blog</a></li>
+              <li><a href="#" title="Coming soon" className="text-sm text-warm-text-secondary/50 cursor-not-allowed">Careers</a></li>
+              <li><a href="/contact" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Contact</a></li>
+            </ul>
+          </div>
+          {/* Legal */}
+          <div>
+            <h4 className="text-sm font-semibold text-warm-text-primary uppercase tracking-wider mb-4">Legal</h4>
+            <ul className="space-y-3">
+              <li><a href="/privacy-policy" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Terms of Service</a></li>
+              <li><a href="/refund-policy" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Refund Policy</a></li>
+            </ul>
+          </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-warm-border flex flex-col sm:flex-row items-center justify-between gap-4">
