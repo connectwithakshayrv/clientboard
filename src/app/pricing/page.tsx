@@ -115,15 +115,21 @@ const faqs = [
 export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   useEffect(() => {
-    async function fetchEmail() {
+    async function checkAuth() {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
-      if (data.user?.email) setUserEmail(data.user.email);
+      if (data.user) {
+        setIsLoggedIn(true);
+        if (data.user.email) setUserEmail(data.user.email);
+      }
+      setAuthChecked(true);
     }
-    fetchEmail();
+    checkAuth();
   }, []);
 
   useEffect(() => {
@@ -147,16 +153,16 @@ export default function PricingPage() {
     });
   }
 
-  async function handleCheckout(planKey: string, planName: string) {
-    setLoadingPlan(planKey);
-
-    // Check if user is logged in
-    const supabase = createClient();
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) {
-      window.location.href = `/signup?redirect=/pricing`;
+  function handleButtonClick(planKey: string, planName: string) {
+    if (!isLoggedIn) {
+      window.location.href = `/login?redirect=/pricing`;
       return;
     }
+    handleCheckout(planKey, planName);
+  }
+
+  async function handleCheckout(planKey: string, planName: string) {
+    setLoadingPlan(planKey);
 
     // Load Razorpay script
     const loaded = await loadRazorpayScript();
@@ -265,6 +271,22 @@ export default function PricingPage() {
         </div>
       </nav>
 
+      {/* ===== SIGN IN BANNER ===== */}
+      {authChecked && !isLoggedIn && (
+        <div className="bg-amber-50 border-b border-amber-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <p className="text-center text-sm text-amber-700 font-medium">
+              <span className="inline-flex items-center gap-2">
+                <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+                Please sign in to subscribe to a plan
+              </span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ===== HERO ===== */}
       <section className="pt-16 sm:pt-24 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -336,7 +358,7 @@ export default function PricingPage() {
                   </ul>
 
                   <button
-                    onClick={() => handleCheckout(plan.key, plan.name)}
+                    onClick={() => handleButtonClick(plan.key, plan.name)}
                     disabled={loadingPlan !== null}
                     className={`block w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${
                       plan.popular
@@ -352,8 +374,10 @@ export default function PricingPage() {
                         </svg>
                         Processing...
                       </span>
-                    ) : (
+                    ) : isLoggedIn ? (
                       "Get Started"
+                    ) : (
+                      "Sign in to get started"
                     )}
                   </button>
                 </div>
