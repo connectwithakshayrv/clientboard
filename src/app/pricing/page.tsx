@@ -42,70 +42,15 @@ interface RazorpayResponse {
    =========================== */
 
 const plans = [
-  {
-    key: "starter",
-    name: "Starter",
-    price: "₹399",
-    period: "/mo",
-    description: "Perfect for freelancers just getting started",
-    features: [
-      "Up to 3 active clients",
-      "File sharing (500 MB)",
-      "Client portal links",
-      "Basic branding",
-      "Email support",
-    ],
-    popular: false,
-  },
-  {
-    key: "pro",
-    name: "Pro",
-    price: "₹799",
-    period: "/mo",
-    description: "For serious freelancers & growing creators",
-    features: [
-      "Unlimited clients",
-      "File sharing (5 GB)",
-      "Custom domain support",
-      "Advanced branding",
-      "Feedback & approval tracking",
-      "Priority support",
-      "Invoice integration",
-    ],
-    popular: true,
-  },
-  {
-    key: "agency",
-    name: "Agency",
-    price: "₹1999",
-    period: "/mo",
-    description: "For agencies & teams who need more power",
-    features: [
-      "Everything in Pro",
-      "Team members (up to 5)",
-      "White-label portals",
-      "File sharing (25 GB)",
-      "Client analytics",
-      "API access",
-      "Dedicated account manager",
-    ],
-    popular: false,
-  },
+  { key: "starter", name: "Starter", price: "₹399", period: "/mo", description: "Perfect for freelancers just getting started", features: ["Up to 3 active clients", "File sharing (500 MB)", "Client portal links", "Basic branding", "Email support"], popular: false },
+  { key: "pro", name: "Pro", price: "₹799", period: "/mo", description: "For serious freelancers & growing creators", features: ["Unlimited clients", "File sharing (5 GB)", "Custom domain support", "Advanced branding", "Feedback & approval tracking", "Priority support", "Invoice integration"], popular: true },
+  { key: "agency", name: "Agency", price: "₹1999", period: "/mo", description: "For agencies & teams who need more power", features: ["Everything in Pro", "Team members (up to 5)", "White-label portals", "File sharing (25 GB)", "Client analytics", "API access", "Dedicated account manager"], popular: false },
 ];
 
 const faqs = [
-  {
-    q: "Is there a free trial?",
-    a: "Yes — 3 clients free forever. Upgrade when needed.",
-  },
-  {
-    q: "Can I cancel anytime?",
-    a: "Yes, cancel anytime with no questions asked.",
-  },
-  {
-    q: "Which payment methods are accepted?",
-    a: "UPI, credit/debit cards, net banking, wallets.",
-  },
+  { q: "Is there a free trial?", a: "Yes — 3 clients free forever. Upgrade when needed." },
+  { q: "Can I cancel anytime?", a: "Yes, cancel anytime with no questions asked." },
+  { q: "Which payment methods are accepted?", a: "UPI, credit/debit cards, net banking, wallets." },
 ];
 
 /* ===========================
@@ -141,10 +86,7 @@ export default function PricingPage() {
 
   function loadRazorpayScript(): Promise<boolean> {
     return new Promise((resolve) => {
-      if (typeof window !== "undefined" && window.Razorpay) {
-        resolve(true);
-        return;
-      }
+      if (typeof window !== "undefined" && window.Razorpay) { resolve(true); return; }
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.onload = () => resolve(true);
@@ -154,132 +96,66 @@ export default function PricingPage() {
   }
 
   function handleButtonClick(planKey: string, planName: string) {
-    if (!isLoggedIn) {
-      window.location.href = `/login?redirect=/pricing`;
-      return;
-    }
+    if (!isLoggedIn) { window.location.href = `/login?redirect=/pricing`; return; }
     handleCheckout(planKey, planName);
   }
 
   async function handleCheckout(planKey: string, planName: string) {
     setLoadingPlan(planKey);
-
-    // Load Razorpay script
     const loaded = await loadRazorpayScript();
-    if (!loaded) {
-      setToast({ message: "Failed to load payment gateway. Please try again.", type: "error" });
-      setLoadingPlan(null);
-      return;
-    }
+    if (!loaded) { setToast({ message: "Failed to load payment gateway.", type: "error" }); setLoadingPlan(null); return; }
 
-    // Create order via API
     try {
-      const res = await fetch("/api/razorpay/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planKey }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        setToast({ message: err.error || "Failed to create order", type: "error" });
-        setLoadingPlan(null);
-        return;
-      }
-
+      const res = await fetch("/api/razorpay/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: planKey }) });
+      if (!res.ok) { const err = await res.json(); setToast({ message: err.error || "Failed to create order", type: "error" }); setLoadingPlan(null); return; }
       const { orderId, amount } = await res.json();
 
-      // Open Razorpay checkout
       const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-        amount,
-        currency: "INR",
-        name: "ClientBoard",
-        description: `${planName} Plan - Monthly`,
-        order_id: orderId,
+        amount, currency: "INR", name: "ClientBoard", description: `${planName} Plan - Monthly`, order_id: orderId,
         handler: async (response: RazorpayResponse) => {
-          // Verify payment
           try {
-            const verifyRes = await fetch("/api/razorpay/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                plan: planKey,
-              }),
-            });
-
-            if (verifyRes.ok) {
-              window.location.href = `/dashboard?payment=success&plan=${planKey}`;
-            } else {
-              setToast({ message: "Payment verification failed. Contact support.", type: "error" });
-              setLoadingPlan(null);
-            }
-          } catch {
-            setToast({ message: "Payment verification failed.", type: "error" });
-            setLoadingPlan(null);
-          }
+            const verifyRes = await fetch("/api/razorpay/verify-payment", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature, plan: planKey }) });
+            if (verifyRes.ok) { window.location.href = `/dashboard?payment=success&plan=${planKey}`; }
+            else { setToast({ message: "Payment verification failed.", type: "error" }); setLoadingPlan(null); }
+          } catch { setToast({ message: "Payment verification failed.", type: "error" }); setLoadingPlan(null); }
         },
         prefill: { email: userEmail },
-        theme: { color: "#6366f1" },
-        modal: {
-          ondismiss: () => {
-            setLoadingPlan(null);
-          },
-        },
+        theme: { color: "#8b4513" },
+        modal: { ondismiss: () => { setLoadingPlan(null); } },
       };
-
       const rzp = new window.Razorpay(options);
       rzp.open();
-    } catch {
-      setToast({ message: "Something went wrong. Please try again.", type: "error" });
-      setLoadingPlan(null);
-    }
+    } catch { setToast({ message: "Something went wrong.", type: "error" }); setLoadingPlan(null); }
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ===== NAVBAR ===== */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
+    <div className="min-h-screen bg-warm-bg">
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-lg border-b border-warm-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shadow-md shadow-primary-500/20">
-                <span className="text-white font-bold text-lg">C</span>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center">
+                <span className="text-warm-btn-primary-text font-bold text-lg">C</span>
               </div>
-              <span className="font-display font-bold text-xl text-slate-900">
-                Client<span className="gradient-text">Board</span>
-              </span>
+              <span className="font-display font-bold text-xl text-warm-text-primary">Client<span className="text-warm-accent">Board</span></span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link
-                href="/login"
-                className="hidden sm:inline-flex text-sm font-medium text-slate-600 hover:text-primary-600 transition-colors"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full gradient-bg text-white text-sm font-semibold shadow-md shadow-primary-500/25 hover:shadow-lg hover:shadow-primary-500/40 hover:-translate-y-0.5 transition-all duration-200"
-              >
-                Get Started Free
-              </Link>
+              <Link href="/login" className="hidden sm:inline-flex text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Log in</Link>
+              <Link href="/signup" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors">Get Started Free</Link>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* ===== SIGN IN BANNER ===== */}
+      {/* SIGN IN BANNER */}
       {authChecked && !isLoggedIn && (
-        <div className="bg-amber-50 border-b border-amber-100">
+        <div className="bg-warm-surface border-b border-warm-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <p className="text-center text-sm text-amber-700 font-medium">
+            <p className="text-center text-sm text-warm-accent font-medium">
               <span className="inline-flex items-center gap-2">
-                <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                </svg>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                 Please sign in to subscribe to a plan
               </span>
             </p>
@@ -287,98 +163,54 @@ export default function PricingPage() {
         </div>
       )}
 
-      {/* ===== HERO ===== */}
+      {/* HERO */}
       <section className="pt-16 sm:pt-24 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto">
-            <span className="inline-block text-sm font-bold tracking-widest uppercase text-primary-600 mb-3">
-              Pricing
-            </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-slate-900 tracking-tight">
-              Simple, transparent pricing
-            </h1>
-            <p className="mt-4 text-lg text-slate-500">
-              No hidden fees. No surprise charges. Cancel anytime.
-            </p>
+            <span className="inline-block text-sm font-bold tracking-widest uppercase text-warm-accent mb-3">Pricing</span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-warm-text-primary tracking-tight">Simple, transparent pricing</h1>
+            <p className="mt-4 text-lg text-warm-text-secondary">No hidden fees. No surprise charges. Cancel anytime.</p>
           </div>
         </div>
       </section>
 
-      {/* ===== PLAN CARDS ===== */}
+      {/* PLAN CARDS */}
       <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-start">
             {plans.map((plan) => (
-              <div
-                key={plan.key}
-                className={`relative rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
-                  plan.popular
-                    ? "border-2 border-primary-500 shadow-2xl shadow-primary-500/10 bg-white"
-                    : "border border-slate-200 bg-white hover:shadow-xl hover:shadow-slate-200/50"
-                }`}
-              >
+              <div key={plan.key} className={`relative rounded-lg p-8 transition-all duration-300 hover:-translate-y-1 ${plan.popular ? "border-2 border-warm-accent bg-warm-surface" : "border border-warm-border bg-warm-surface hover:bg-white"}`}>
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center px-4 py-1.5 rounded-full gradient-bg text-white text-xs font-bold tracking-wide uppercase shadow-lg shadow-primary-500/30">
-                      Most Popular
-                    </span>
+                    <span className="inline-flex items-center px-4 py-1.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-xs font-bold tracking-wide uppercase">Most Popular</span>
                   </div>
                 )}
-
                 <div className={plan.popular ? "pt-2" : ""}>
-                  <h3 className="text-lg font-bold text-slate-900">
-                    {plan.name}
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-1">
-                    {plan.description}
-                  </p>
-
+                  <h3 className="text-lg font-bold text-warm-text-primary font-display">{plan.name}</h3>
+                  <p className="text-sm text-warm-text-secondary mt-1">{plan.description}</p>
                   <div className="mt-6 mb-6">
-                    <span className="text-4xl font-display font-extrabold text-slate-900">
-                      {plan.price}
-                    </span>
-                    <span className="text-slate-400 text-lg">{plan.period}</span>
+                    <span className="text-4xl font-display font-bold text-warm-text-primary">{plan.price}</span>
+                    <span className="text-warm-text-secondary text-lg">{plan.period}</span>
                   </div>
-
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, j) => (
                       <li key={j} className="flex items-start gap-3">
-                        <span
-                          className={`mt-0.5 flex-shrink-0 ${
-                            plan.popular
-                              ? "text-primary-500"
-                              : "text-slate-400"
-                          }`}
-                        >
-                          <CheckIcon />
-                        </span>
-                        <span className="text-sm text-slate-600">{feature}</span>
+                        <span className={`mt-0.5 flex-shrink-0 ${plan.popular ? "text-warm-accent" : "text-warm-text-secondary"}`}><CheckIcon /></span>
+                        <span className="text-sm text-warm-text-secondary">{feature}</span>
                       </li>
                     ))}
                   </ul>
-
                   <button
                     onClick={() => handleButtonClick(plan.key, plan.name)}
                     disabled={loadingPlan !== null}
-                    className={`block w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${
-                      plan.popular
-                        ? "gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/40 hover:-translate-y-0.5"
-                        : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
-                    }`}
+                    className={`block w-full text-center py-3.5 rounded-lg font-semibold text-sm transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${plan.popular ? "bg-warm-btn-primary-bg text-warm-btn-primary-text hover:bg-warm-accent" : "bg-warm-bg text-warm-text-primary hover:bg-white border border-warm-border"}`}
                   >
                     {loadingPlan === plan.key ? (
                       <span className="inline-flex items-center gap-2">
-                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
+                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
                         Processing...
                       </span>
-                    ) : isLoggedIn ? (
-                      "Get Started"
-                    ) : (
-                      "Sign in to get started"
-                    )}
+                    ) : isLoggedIn ? "Get Started" : "Sign in to get started"}
                   </button>
                 </div>
               </div>
@@ -387,85 +219,44 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ===== FAQ ===== */}
-      <section className="py-16 sm:py-24 bg-gradient-to-b from-white to-slate-50">
+      {/* FAQ */}
+      <section className="py-16 sm:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-slate-900">
-              Frequently Asked Questions
-            </h2>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-warm-text-primary">Frequently Asked Questions</h2>
           </div>
-
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-md transition-shadow"
-              >
-                <h3 className="font-display font-bold text-slate-900 mb-2">
-                  {faq.q}
-                </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
-                  {faq.a}
-                </p>
+              <div key={i} className="bg-warm-surface rounded-lg border border-warm-border p-6 hover:bg-white transition-colors">
+                <h3 className="font-display font-bold text-warm-text-primary mb-2">{faq.q}</h3>
+                <p className="text-sm text-warm-text-secondary leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ===== FOOTER CTA ===== */}
+      {/* FOOTER CTA */}
       <section className="py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-slate-900 mb-4">
-            Ready to get started?
-          </h2>
-          <p className="text-slate-500 mb-8">
-            Start free with up to 3 clients. No credit card required.
-          </p>
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full gradient-bg text-white font-semibold text-lg shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 hover:-translate-y-1 transition-all duration-300"
-          >
-            Get Started Free
-          </Link>
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-warm-text-primary mb-4">Ready to get started?</h2>
+          <p className="text-warm-text-secondary mb-8">Start free with up to 3 clients. No credit card required.</p>
+          <Link href="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text font-semibold text-lg hover:bg-warm-accent transition-colors duration-200">Get Started Free</Link>
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
-      <footer className="border-t border-slate-100 py-8">
+      {/* FOOTER */}
+      <footer className="border-t border-warm-border py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <p className="text-xs text-slate-400">
-            © 2026 ClientBoard. All rights reserved.
-          </p>
-          <Link
-            href="/"
-            className="text-xs text-slate-400 hover:text-primary-600 transition-colors font-medium"
-          >
-            ← Back to Home
-          </Link>
+          <p className="text-xs text-warm-text-secondary">© 2026 ClientBoard. All rights reserved.</p>
+          <Link href="/" className="text-xs text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
         </div>
       </footer>
 
-      {/* ===== TOAST ===== */}
+      {/* TOAST */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 animate-fade-up">
-          <div
-            className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium ${
-              toast.type === "success"
-                ? "bg-emerald-600 text-white"
-                : "bg-red-600 text-white"
-            }`}
-          >
-            {toast.type === "success" ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-              </svg>
-            )}
+          <div className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium ${toast.type === "success" ? "bg-emerald-700 text-white" : "bg-red-700 text-white"}`}>
             {toast.message}
           </div>
         </div>
@@ -474,23 +265,6 @@ export default function PricingPage() {
   );
 }
 
-/* ===========================
-   CHECK ICON
-   =========================== */
-
 function CheckIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="w-5 h-5"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
+  return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><polyline points="20 6 9 17 4 12" /></svg>);
 }

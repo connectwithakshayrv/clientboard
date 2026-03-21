@@ -64,13 +64,13 @@ function LoginForm() {
   return (
     <div className="w-full max-w-md">
       {/* Card */}
-      <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 sm:p-10">
+      <div className="bg-warm-surface rounded-lg border border-warm-border p-8 sm:p-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-warm-text-primary">
             Welcome back
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-warm-text-secondary">
             Sign in to your ClientBoard account.
           </p>
         </div>
@@ -79,7 +79,7 @@ function LoginForm() {
         <button
           onClick={handleGoogleLogin}
           disabled={googleLoading || loading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-slate-200 bg-white text-slate-700 font-semibold text-sm hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-warm-border bg-warm-bg text-warm-text-primary font-semibold text-sm hover:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {googleLoading ? (
             <Spinner />
@@ -92,10 +92,10 @@ function LoginForm() {
         {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200" />
+            <div className="w-full border-t border-warm-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-3 text-slate-400 font-medium">
+            <span className="bg-warm-surface px-3 text-warm-text-secondary font-medium">
               or continue with email
             </span>
           </div>
@@ -106,7 +106,7 @@ function LoginForm() {
           <div>
             <label
               htmlFor="login-email"
-              className="block text-sm font-medium text-slate-700 mb-1.5"
+              className="block text-sm font-medium text-warm-text-primary mb-1.5"
             >
               Email address
             </label>
@@ -117,7 +117,7 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-slate-50/50 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg border border-warm-border bg-warm-bg text-warm-text-primary text-sm placeholder:text-warm-text-secondary/60 focus:outline-none focus:border-warm-accent transition-colors duration-200"
             />
           </div>
 
@@ -125,11 +125,11 @@ function LoginForm() {
             <div className="flex items-center justify-between mb-1.5">
               <label
                 htmlFor="login-password"
-                className="block text-sm font-medium text-slate-700"
+                className="block text-sm font-medium text-warm-text-primary"
               >
                 Password
               </label>
-              <span className="text-xs text-slate-400 cursor-default">
+              <span className="text-xs text-warm-text-secondary cursor-default">
                 Forgot password?
               </span>
             </div>
@@ -140,13 +140,13 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
-              className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-slate-50/50 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg border border-warm-border bg-warm-bg text-warm-text-primary text-sm placeholder:text-warm-text-secondary/60 focus:outline-none focus:border-warm-accent transition-colors duration-200"
             />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100">
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
               <svg
                 className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
                 fill="none"
@@ -167,7 +167,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || googleLoading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl gradient-bg text-white font-semibold text-sm shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/40 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text font-semibold text-sm hover:bg-warm-accent transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading && <Spinner />}
             Sign In
@@ -176,11 +176,11 @@ function LoginForm() {
       </div>
 
       {/* Footer */}
-      <p className="text-center mt-6 text-sm text-slate-500">
+      <p className="text-center mt-6 text-sm text-warm-text-secondary">
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="font-semibold text-primary-600 hover:text-primary-700 transition-colors"
+          className="font-semibold text-warm-accent hover:text-warm-accent-hover transition-colors"
         >
           Sign up free
         </Link>

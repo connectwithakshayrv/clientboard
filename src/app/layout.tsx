@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-dm-sans",
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${plusJakarta.variable} antialiased`}>
+      <body className={`${dmSans.variable} ${playfair.variable} antialiased`}>
         {children}
       </body>
     </html>

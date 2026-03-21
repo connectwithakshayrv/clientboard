@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ===========================
-   GLOBAL STYLES
+   WARM MINIMAL DESIGN SYSTEM
    =========================== */
 
 @layer base {
@@ -12,11 +12,15 @@
   }
 
   body {
-    @apply bg-white text-slate-800 font-sans antialiased;
+    background-color: #faf6f0;
+    color: #2c1810;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
+    font-family: var(--font-playfair), Georgia, serif;
   }
 }
 
@@ -29,16 +33,12 @@
     text-wrap: balance;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500;
+  .font-display {
+    font-family: var(--font-playfair), Georgia, serif;
   }
 
-  .gradient-bg {
-    @apply bg-gradient-to-r from-primary-600 to-accent-600;
-  }
-
-  .gradient-bg-subtle {
-    @apply bg-gradient-to-br from-primary-50 via-white to-accent-50;
+  .font-sans {
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
   }
 }
 
@@ -47,7 +47,7 @@
    =========================== */
 
 section {
-  @apply relative;
+  position: relative;
 }
 
 /* ===========================
@@ -59,15 +59,16 @@ section {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-slate-100;
+  background: #f5ede0;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full;
+  background: #e8ddd0;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400;
+  background: #d4c8b8;
 }
 
 /* ===========================
@@ -75,5 +76,6 @@ section {
    =========================== */
 
 ::selection {
-  @apply bg-primary-200 text-primary-900;
+  background: #e8ddd0;
+  color: #2c1810;
 }

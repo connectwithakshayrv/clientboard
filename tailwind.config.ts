@@ -9,47 +9,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
-        },
-        accent: {
-          50: "#faf5ff",
-          100: "#f3e8ff",
-          200: "#e9d5ff",
-          300: "#d8b4fe",
-          400: "#c084fc",
-          500: "#a855f7",
-          600: "#9333ea",
-          700: "#7e22ce",
-          800: "#6b21a8",
-          900: "#581c87",
-        },
-        slate: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
-          200: "#e2e8f0",
-          300: "#cbd5e1",
-          400: "#94a3b8",
-          500: "#64748b",
-          600: "#475569",
-          700: "#334155",
-          800: "#1e293b",
-          900: "#0f172a",
+        warm: {
+          bg: "#faf6f0",
+          surface: "#f5ede0",
+          border: "#e8ddd0",
+          accent: "#8b4513",
+          "accent-hover": "#6b3410",
+          "text-primary": "#2c1810",
+          "text-secondary": "#7a6555",
+          "badge-bg": "#f5ede0",
+          "badge-text": "#8b4513",
+          "btn-primary-bg": "#2c1810",
+          "btn-primary-text": "#faf6f0",
         },
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-plus-jakarta)", "system-ui", "sans-serif"],
+        sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
+      },
+      borderRadius: {
+        DEFAULT: "8px",
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",
@@ -57,7 +36,6 @@ const config: Config = {
         "slide-in-left": "slideInLeft 0.6s ease-out forwards",
         "slide-in-right": "slideInRight 0.6s ease-out forwards",
         float: "float 6s ease-in-out infinite",
-        "pulse-glow": "pulseGlow 2s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -79,10 +57,6 @@ const config: Config = {
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
-        },
-        pulseGlow: {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(99, 102, 241, 0.3)" },
-          "50%": { boxShadow: "0 0 40px rgba(99, 102, 241, 0.6)" },
         },
       },
     },
