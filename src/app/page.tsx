@@ -90,16 +90,11 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center">
-              <span className="text-warm-btn-primary-text font-bold text-lg">C</span>
-            </div>
-            <span className="font-display font-bold text-xl text-warm-text-primary">
-              Client<span className="text-warm-accent">Board</span>
-            </span>
+            <img src="/logo.svg" alt="COLLABILL" className="h-7 sm:h-8 w-auto transition-transform group-hover:scale-105" />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#problem" className="text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Why ClientBoard</a>
+            <a href="#problem" className="text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Why COLLABILL</a>
             <a href="#how-it-works" className="text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">How It Works</a>
             <a href="#pricing" className="text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Pricing</a>
           </div>
@@ -213,7 +208,7 @@ function ProblemSection() {
             Sound familiar?
           </h2>
           <p className="mt-4 text-lg text-warm-text-secondary">
-            Every freelancer in India faces these problems daily. We built ClientBoard to fix them.
+            Every freelancer in India faces these problems daily. We built COLLABILL to fix them.
           </p>
         </div>
 
@@ -345,11 +340,8 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center">
-                <span className="text-warm-btn-primary-text font-bold text-lg">C</span>
-              </div>
-              <span className="font-display font-bold text-xl text-warm-text-primary">ClientBoard</span>
+            <div className="flex items-center mb-6">
+              <img src="/logo.svg" alt="COLLABILL" className="h-8 w-auto" />
             </div>
             <p className="text-sm leading-relaxed max-w-xs text-warm-text-secondary">
               The simplest way for Indian freelancers and creators to manage client communication. Built with ❤️ in India.
@@ -387,7 +379,7 @@ function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-warm-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-warm-text-secondary">© 2026 ClientBoard. All rights reserved.</p>
+          <p className="text-xs text-warm-text-secondary">© 2026 COLLABILL. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <a href="#" aria-label="Twitter" className="text-warm-text-secondary hover:text-warm-accent transition-colors">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>

@@ -61,7 +61,7 @@ export default function SignupPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-warm-text-primary">
-            Start your free ClientBoard
+            Start your free COLLABILL
           </h1>
           <p className="mt-2 text-sm text-warm-text-secondary">
             Create your account and start managing clients professionally.

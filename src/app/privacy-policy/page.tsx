@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — ClientBoard",
-  description: "How ClientBoard collects, uses, and protects your data.",
+  title: "Privacy Policy — COLLABILL",
+  description: "How COLLABILL collects, uses, and protects your data.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -13,11 +13,8 @@ export default function PrivacyPolicyPage() {
       <nav className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-lg border-b border-warm-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center">
-                <span className="text-warm-btn-primary-text font-bold text-lg">C</span>
-              </div>
-              <span className="font-display font-bold text-xl text-warm-text-primary">Client<span className="text-warm-accent">Board</span></span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <img src="/logo.svg" alt="COLLABILL" className="h-7 sm:h-8 w-auto transition-transform group-hover:scale-105" />
             </Link>
             <Link href="/" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
           </div>
@@ -31,8 +28,8 @@ export default function PrivacyPolicyPage() {
 
         <div className="space-y-8">
           <Section title="1. Introduction">
-            <p>ClientBoard (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a client portal tool built for Indian freelancers and creators. This Privacy Policy explains how we collect, use, and protect your personal information when you use our service at clientboard.app.</p>
-            <p>By using ClientBoard, you agree to the collection and use of information as described in this policy.</p>
+            <p>COLLABILL (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a client portal tool built for Indian freelancers and creators. This Privacy Policy explains how we collect, use, and protect your personal information when you use our service at collabill.app.</p>
+            <p>By using COLLABILL, you agree to the collection and use of information as described in this policy.</p>
           </Section>
 
           <Section title="2. Information We Collect">
@@ -49,7 +46,7 @@ export default function PrivacyPolicyPage() {
 
           <Section title="3. How We Use Your Information">
             <ul className="list-disc pl-5 space-y-1.5 text-warm-text-secondary text-sm leading-relaxed">
-              <li>To provide and maintain the ClientBoard service.</li>
+              <li>To provide and maintain the COLLABILL service.</li>
               <li>To create and manage your account.</li>
               <li>To process payments and manage subscriptions.</li>
               <li>To send important service-related communications.</li>
@@ -86,7 +83,7 @@ export default function PrivacyPolicyPage() {
             <p>If you have questions about this Privacy Policy, contact us:</p>
             <ul className="list-none space-y-1 text-warm-text-secondary text-sm">
               <li>📧 Email: <strong className="text-warm-text-primary">connectwithakshayrv@gmail.com</strong></li>
-              <li>🏢 Company: <strong className="text-warm-text-primary">ClientBoard, India</strong></li>
+              <li>🏢 Company: <strong className="text-warm-text-primary">COLLABILL, India</strong></li>
             </ul>
           </Section>
         </div>
@@ -95,7 +92,7 @@ export default function PrivacyPolicyPage() {
       {/* FOOTER */}
       <footer className="border-t border-warm-border py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <p className="text-xs text-warm-text-secondary">© 2026 ClientBoard. All rights reserved.</p>
+          <p className="text-xs text-warm-text-secondary">© 2026 COLLABILL. All rights reserved.</p>
           <Link href="/" className="text-xs text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
         </div>
       </footer>

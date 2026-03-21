@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — ClientBoard",
-  description: "Terms and conditions for using the ClientBoard platform.",
+  title: "Terms of Service — COLLABILL",
+  description: "Terms and conditions for using the COLLABILL platform.",
 };
 
 export default function TermsPage() {
@@ -12,9 +12,8 @@ export default function TermsPage() {
       <nav className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-lg border-b border-warm-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center"><span className="text-warm-btn-primary-text font-bold text-lg">C</span></div>
-              <span className="font-display font-bold text-xl text-warm-text-primary">Client<span className="text-warm-accent">Board</span></span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <img src="/logo.svg" alt="COLLABILL" className="h-7 sm:h-8 w-auto transition-transform group-hover:scale-105" />
             </Link>
             <Link href="/" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
           </div>
@@ -27,11 +26,11 @@ export default function TermsPage() {
 
         <div className="space-y-8">
           <Section title="1. Service Description">
-            <p>ClientBoard is a SaaS platform that enables freelancers and creators in India to create professional client portals for sharing project updates, files, and collecting feedback. By creating an account or using our service, you agree to these Terms of Service.</p>
+            <p>COLLABILL is a SaaS platform that enables freelancers and creators in India to create professional client portals for sharing project updates, files, and collecting feedback. By creating an account or using our service, you agree to these Terms of Service.</p>
           </Section>
 
           <Section title="2. Account Registration">
-            <p>To use ClientBoard, you must create an account by providing a valid email address. You are responsible for:</p>
+            <p>To use COLLABILL, you must create an account by providing a valid email address. You are responsible for:</p>
             <ul className="list-disc pl-5 space-y-1.5 text-warm-text-secondary text-sm leading-relaxed">
               <li>Maintaining the confidentiality of your account credentials.</li>
               <li>All activities that occur under your account.</li>
@@ -41,7 +40,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="3. User Responsibilities">
-            <p>When using ClientBoard, you agree to:</p>
+            <p>When using COLLABILL, you agree to:</p>
             <ul className="list-disc pl-5 space-y-1.5 text-warm-text-secondary text-sm leading-relaxed">
               <li>Use the service only for lawful purposes.</li>
               <li>Not upload malicious, offensive, or illegal content.</li>
@@ -52,19 +51,19 @@ export default function TermsPage() {
           </Section>
 
           <Section title="4. Payment Terms">
-            <p>ClientBoard offers monthly subscription plans:</p>
+            <p>COLLABILL offers monthly subscription plans:</p>
             <ul className="list-disc pl-5 space-y-1.5 text-warm-text-secondary text-sm leading-relaxed">
               <li><strong className="text-warm-text-primary">Starter</strong> — ₹399/month (up to 3 clients)</li>
               <li><strong className="text-warm-text-primary">Pro</strong> — ₹799/month (unlimited clients)</li>
               <li><strong className="text-warm-text-primary">Agency</strong> — ₹1,999/month (team + white label)</li>
             </ul>
             <p>Payments are processed securely via Razorpay. Subscriptions renew automatically each month.</p>
-            <p><strong className="text-warm-text-primary">All payments are final and non-refundable.</strong> ClientBoard does not offer refunds under any circumstances. Please try the free plan before upgrading to a paid plan.</p>
+            <p><strong className="text-warm-text-primary">All payments are final and non-refundable.</strong> COLLABILL does not offer refunds under any circumstances. Please try the free plan before upgrading to a paid plan.</p>
           </Section>
 
           <Section title="5. Intellectual Property">
-            <p>You retain full ownership of all content you upload to ClientBoard (files, updates, project data). We do not claim any intellectual property rights over your content.</p>
-            <p>The ClientBoard brand, logo, design, and codebase are the intellectual property of ClientBoard and may not be copied or reproduced without permission.</p>
+            <p>You retain full ownership of all content you upload to COLLABILL (files, updates, project data). We do not claim any intellectual property rights over your content.</p>
+            <p>The COLLABILL brand, logo, design, and codebase are the intellectual property of COLLABILL and may not be copied or reproduced without permission.</p>
           </Section>
 
           <Section title="6. Account Termination">
@@ -78,7 +77,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="7. Limitation of Liability">
-            <p>ClientBoard is provided &quot;as is&quot; without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the service. Our total liability is limited to the amount you paid for the service in the last 12 months.</p>
+            <p>COLLABILL is provided &quot;as is&quot; without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the service. Our total liability is limited to the amount you paid for the service in the last 12 months.</p>
           </Section>
 
           <Section title="8. Governing Law">
@@ -93,7 +92,7 @@ export default function TermsPage() {
 
       <footer className="border-t border-warm-border py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <p className="text-xs text-warm-text-secondary">© 2026 ClientBoard. All rights reserved.</p>
+          <p className="text-xs text-warm-text-secondary">© 2026 COLLABILL. All rights reserved.</p>
           <Link href="/" className="text-xs text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
         </div>
       </footer>

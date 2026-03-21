@@ -40,11 +40,8 @@ export default function ContactPage() {
       <nav className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-lg border-b border-warm-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center">
-                <span className="text-warm-btn-primary-text font-bold text-lg">C</span>
-              </div>
-              <span className="font-display font-bold text-xl text-warm-text-primary">Client<span className="text-warm-accent">Board</span></span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <img src="/logo.svg" alt="COLLABILL" className="h-7 sm:h-8 w-auto transition-transform group-hover:scale-105" />
             </Link>
             <Link href="/" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
           </div>
@@ -79,7 +76,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-warm-text-primary">Twitter</p>
-                    <a href="https://twitter.com/clientboard" target="_blank" rel="noopener noreferrer" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">@clientboard</a>
+                    <a href="https://twitter.com/collabill" target="_blank" rel="noopener noreferrer" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">@collabill</a>
                   </div>
                 </div>
 
@@ -154,7 +151,7 @@ export default function ContactPage() {
 
       <footer className="border-t border-warm-border py-8 mt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <p className="text-xs text-warm-text-secondary">© 2026 ClientBoard. All rights reserved.</p>
+          <p className="text-xs text-warm-text-secondary">© 2026 COLLABILL. All rights reserved.</p>
           <Link href="/" className="text-xs text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
         </div>
       </footer>

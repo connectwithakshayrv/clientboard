@@ -115,7 +115,7 @@ export default function PricingPage() {
 
       const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-        amount, currency: "INR", name: "ClientBoard", description: `${planName} Plan - Monthly`, order_id: orderId,
+        amount, currency: "INR", name: "COLLABILL", description: `${planName} Plan - Monthly`, order_id: orderId,
         handler: async (response: RazorpayResponse) => {
           try {
             const verifyRes = await fetch("/api/razorpay/verify-payment", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature, plan: planKey }) });
@@ -138,11 +138,8 @@ export default function PricingPage() {
       <nav className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-lg border-b border-warm-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center">
-                <span className="text-warm-btn-primary-text font-bold text-lg">C</span>
-              </div>
-              <span className="font-display font-bold text-xl text-warm-text-primary">Client<span className="text-warm-accent">Board</span></span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <img src="/logo.svg" alt="COLLABILL" className="h-7 sm:h-8 w-auto transition-transform group-hover:scale-105" />
             </Link>
             <div className="flex items-center gap-3">
               <Link href="/login" className="hidden sm:inline-flex text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Log in</Link>
@@ -251,7 +248,7 @@ export default function PricingPage() {
       {/* FOOTER */}
       <footer className="border-t border-warm-border py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <p className="text-xs text-warm-text-secondary">© 2026 ClientBoard. All rights reserved.</p>
+          <p className="text-xs text-warm-text-secondary">© 2026 COLLABILL. All rights reserved.</p>
           <Link href="/" className="text-xs text-warm-text-secondary hover:text-warm-accent transition-colors font-medium">← Back to Home</Link>
         </div>
       </footer>

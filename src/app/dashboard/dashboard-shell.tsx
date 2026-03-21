@@ -47,9 +47,8 @@ export default function DashboardShell({ userEmail, userFullName }: { userEmail:
     <div className="min-h-screen bg-warm-bg flex flex-col">
       <nav className="sticky top-0 z-40 bg-warm-bg/90 backdrop-blur-lg border-b border-warm-border">
         <div className="px-4 sm:px-6 lg:px-8"><div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center"><span className="text-warm-btn-primary-text font-bold text-sm">C</span></div>
-            <span className="font-display font-bold text-lg text-warm-text-primary">Client<span className="text-warm-accent">Board</span></span>
+          <div className="flex items-center">
+            <img src="/logo.svg" alt="COLLABILL" className="h-6 sm:h-7 w-auto" />
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden sm:block text-sm text-warm-text-secondary">{userEmail}</span>

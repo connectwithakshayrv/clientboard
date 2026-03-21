@@ -71,7 +71,7 @@ function LoginForm() {
             Welcome back
           </h1>
           <p className="mt-2 text-sm text-warm-text-secondary">
-            Sign in to your ClientBoard account.
+            Sign in to your COLLABILL account.
           </p>
         </div>
 

@@ -9,8 +9,8 @@ interface PortalFile { id: string; name: string; url: string; created_at: string
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const supabase = createClient();
   const { data: client } = await supabase.from("clients").select("name, project_name").eq("portal_slug", params.slug).single();
-  if (!client) return { title: "Portal Not Found — ClientBoard" };
-  return { title: `${client.project_name || client.name} — ClientBoard Portal`, description: `Client portal for ${client.name}` };
+  if (!client) return { title: "Portal Not Found — COLLABILL" };
+  return { title: `${client.project_name || client.name} — COLLABILL Portal`, description: `Client portal for ${client.name}` };
 }
 
 export default async function PortalPage({ params }: { params: { slug: string } }) {
@@ -29,9 +29,8 @@ export default async function PortalPage({ params }: { params: { slug: string } 
     <div className="min-h-screen bg-warm-bg animate-fade-in">
       <header className="border-b border-warm-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-7 h-7 rounded-lg bg-warm-btn-primary-bg flex items-center justify-center"><span className="text-warm-btn-primary-text font-bold text-xs">C</span></div>
-            <span className="font-display font-bold text-sm text-warm-text-secondary">ClientBoard</span>
+          <div className="flex items-center mb-8">
+            <img src="/logo.svg" alt="COLLABILL" className="h-5 sm:h-6 w-auto opacity-75 grayscale" />
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <div className="flex-1">
@@ -120,8 +119,8 @@ export default async function PortalPage({ params }: { params: { slug: string } 
 
       <footer className="border-t border-warm-border py-8 mt-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-xs text-warm-text-secondary hover:text-warm-accent transition-colors">
-            Powered by <span className="font-display font-bold">Client<span className="text-warm-accent">Board</span></span>
+          <Link href="/" className="inline-flex items-center gap-2 text-xs text-warm-text-secondary hover:text-warm-accent transition-colors group">
+            Powered by <img src="/logo.svg" alt="COLLABILL" className="h-4 w-auto grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100" />
           </Link>
         </div>
       </footer>
@@ -138,7 +137,7 @@ function PortalNotFound() {
         </div>
         <h1 className="text-2xl font-display font-bold text-warm-text-primary mb-2">Portal not found</h1>
         <p className="text-sm text-warm-text-secondary mb-8">This portal link might be incorrect or the project may have been removed.</p>
-        <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors">Go to ClientBoard</Link>
+        <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors">Go to COLLABILL</Link>
       </div>
     </div>
   );
