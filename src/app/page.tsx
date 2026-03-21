@@ -128,15 +128,11 @@ function HeroSection() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-warm-text-primary leading-[1.1] animate-fade-up">
-            Stop managing clients
-            <br />
-            on WhatsApp.{" "}
-            <span className="text-warm-accent">Finally.</span>
+            Stop managing clients on WhatsApp. Finally.
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-warm-text-secondary leading-relaxed max-w-2xl mx-auto animate-fade-up [animation-delay:150ms]">
-            Give every client a beautiful portal — share files, updates and get
-            feedback in one link. No more scattered chats.
+            Give every client a beautiful portal with COLLABILL. Share files, post updates, and look professional — all from one simple dashboard.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up [animation-delay:300ms]">
@@ -344,7 +340,7 @@ function Footer() {
               <img src="/logo.svg" alt="COLLABILL" className="h-8 w-auto" />
             </div>
             <p className="text-sm leading-relaxed max-w-xs text-warm-text-secondary">
-              The simplest way for Indian freelancers and creators to manage client communication. Built with ❤️ in India.
+              The simplest way for Indian freelancers to manage clients. Built with ❤️ in India.
             </p>
           </div>
 

@@ -20,6 +20,7 @@ export default function DashboardShell({ userEmail, userFullName }: { userEmail:
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
   const [showAddUpdate, setShowAddUpdate] = useState<string | null>(null);
+  const [showAddFile, setShowAddFile] = useState<string | null>(null);
   const currentPlan = subscription?.plan || "free";
   const clientLimit = PLAN_CLIENT_LIMITS[currentPlan] ?? 3;
 
@@ -64,7 +65,7 @@ export default function DashboardShell({ userEmail, userFullName }: { userEmail:
         </div></aside>
         <main className="flex-1 overflow-y-auto pb-20 md:pb-8"><div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {activeTab === "overview" && <OverviewTab totalClients={clients.length} activeCount={activeCount} loading={loading} />}
-          {activeTab === "clients" && <ClientsTab clients={clients} loading={loading} onAddClient={handleAddClient} onAddUpdate={(id) => setShowAddUpdate(id)} addToast={addToast} />}
+          {activeTab === "clients" && <ClientsTab clients={clients} loading={loading} onAddClient={handleAddClient} onAddUpdate={(id) => setShowAddUpdate(id)} onShareFile={(id) => setShowAddFile(id)} addToast={addToast} />}
           {activeTab === "settings" && <SettingsTab userEmail={userEmail} userFullName={userFullName} addToast={addToast} subscription={subscription} />}
         </div></main>
       </div>
@@ -75,6 +76,7 @@ export default function DashboardShell({ userEmail, userFullName }: { userEmail:
       </div></div>
       {showAddClient && <AddClientModal onClose={() => setShowAddClient(false)} onSuccess={() => { setShowAddClient(false); fetchClients(); addToast("Client added!", "success"); }} addToast={addToast} />}
       {showAddUpdate && <AddUpdateModal clientId={showAddUpdate} onClose={() => setShowAddUpdate(null)} onSuccess={() => { setShowAddUpdate(null); addToast("Update posted!", "success"); }} addToast={addToast} />}
+      {showAddFile && <AddFileModal clientId={showAddFile} onClose={() => setShowAddFile(null)} onSuccess={() => { setShowAddFile(null); fetchClients(); }} addToast={addToast} />}
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={(e) => e.target === e.currentTarget && setShowUpgradeModal(false)}>
           <div className="bg-warm-surface rounded-lg shadow-2xl w-full max-w-md p-6 sm:p-8 animate-fade-up text-center">
@@ -111,8 +113,8 @@ function OverviewTab({ totalClients, activeCount, loading }: { totalClients: num
   </div>);
 }
 
-function ClientsTab({ clients, loading, onAddClient, onAddUpdate, addToast }: { clients: Client[]; loading: boolean; onAddClient: () => void; onAddUpdate: (id: string) => void; addToast: (m: string, t: "success"|"error") => void }) {
-  async function copyLink(slug: string) { const b = process.env.NEXT_PUBLIC_APP_URL || window.location.origin; try { await navigator.clipboard.writeText(`${b}/portal/${slug}`); addToast("Link copied!", "success"); } catch { addToast("Failed to copy", "error"); } }
+function ClientsTab({ clients, loading, onAddClient, onAddUpdate, onShareFile, addToast }: { clients: Client[]; loading: boolean; onAddClient: () => void; onAddUpdate: (id: string) => void; onShareFile: (id: string) => void; addToast: (m: string, t: "success"|"error") => void }) {
+  async function copyLink(slug: string) { const b = process.env.NEXT_PUBLIC_APP_URL || "https://collabill.vercel.app"; try { await navigator.clipboard.writeText(`${b}/portal/${slug}`); addToast("Link copied!", "success"); } catch { addToast("Failed to copy", "error"); } }
   return (<div>
     <div className="flex items-center justify-between mb-8"><div><h1 className="text-2xl font-display font-bold text-warm-text-primary mb-1">Clients</h1><p className="text-sm text-warm-text-secondary">Manage your clients and their portals.</p></div>
     <button onClick={onAddClient} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors"><PlusIcon /><span className="hidden sm:inline">Add New Client</span><span className="sm:hidden">Add</span></button></div>
@@ -133,8 +135,9 @@ function ClientsTab({ clients, loading, onAddClient, onAddUpdate, addToast }: { 
           {c.email && <p className="text-xs text-warm-text-secondary/70 mt-0.5 truncate">{c.email}</p>}</div>
         </div>
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <button onClick={() => onShareFile(c.id)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-warm-bg border border-warm-border text-warm-text-secondary text-xs font-semibold hover:bg-white transition-colors"><FileIcon />Share File</button>
           <button onClick={() => onAddUpdate(c.id)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-warm-bg border border-warm-border text-warm-text-secondary text-xs font-semibold hover:bg-white transition-colors"><EditIcon />Add Update</button>
-          {c.portal_slug && (<><button onClick={() => copyLink(c.portal_slug!)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-warm-bg border border-warm-border text-warm-text-secondary text-xs font-semibold hover:bg-white transition-colors"><ShareIcon />Share Link</button>
+          {c.portal_slug && (<><button onClick={() => copyLink(c.portal_slug!)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-warm-bg border border-warm-border text-warm-text-secondary text-xs font-semibold hover:bg-white transition-colors"><ShareIcon />Share Portal</button>
           <a href={`/portal/${c.portal_slug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-xs font-semibold hover:bg-warm-accent transition-colors"><ExternalIcon />Open Portal</a></>)}
         </div>
       </div></div>
@@ -212,3 +215,81 @@ function LogoutIcon() { return (<svg className="w-4 h-4" fill="none" viewBox="0 
 function CheckCircleIcon() { return (<svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>); }
 function ErrorCircleIcon() { return (<svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>); }
 function Spinner() { return (<svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>); }
+
+function FileIcon() { return (<svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>); }
+
+function AddFileModal({ clientId, onClose, onSuccess, addToast }: { clientId: string; onClose: () => void; onSuccess: () => void; addToast: (m: string, t: "success"|"error") => void }) {
+  const [tab, setTab] = useState<"upload"|"link">("upload");
+  const [file, setFile] = useState<File|null>(null);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkName, setLinkName] = useState("");
+  const [saving, setSaving] = useState(false);
+  
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { addToast("Not authenticated", "error"); setSaving(false); return; }
+
+    if (tab === "upload" && file) {
+      const path = `${user.id}/${clientId}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage.from('client-files').upload(path, file);
+      if (uploadError) { addToast(uploadError.message, "error"); setSaving(false); return; }
+      
+      const { data: { publicUrl } } = supabase.storage.from('client-files').getPublicUrl(path);
+      const { error: dbError } = await supabase.from('files').insert({ client_id: clientId, creator_id: user.id, name: file.name, url: publicUrl });
+      if (dbError) { addToast(dbError.message, "error"); } else { addToast("File shared!", "success"); onSuccess(); }
+    } else if (tab === "link" && linkUrl && linkName) {
+      const { error: dbError } = await supabase.from('files').insert({ client_id: clientId, creator_id: user.id, name: linkName, url: linkUrl });
+      if (dbError) { addToast(dbError.message, "error"); } else { addToast("Link shared!", "success"); onSuccess(); }
+    }
+    setSaving(false);
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-warm-surface rounded-lg shadow-2xl w-full max-w-md p-6 sm:p-8 animate-fade-up">
+        <div className="flex items-center justify-between mb-6"><h2 className="text-xl font-display font-bold text-warm-text-primary">Share File</h2><button onClick={onClose} className="p-1 rounded-lg text-warm-text-secondary hover:text-warm-text-primary hover:bg-warm-bg transition-colors"><CloseIcon /></button></div>
+        
+        <div className="flex bg-warm-bg rounded-lg p-1 mb-6 border border-warm-border">
+          <button onClick={() => setTab("upload")} type="button" className={`flex-1 text-sm font-semibold py-2 rounded-md transition-colors ${tab === "upload" ? "bg-warm-surface text-warm-text-primary shadow-sm" : "text-warm-text-secondary hover:text-warm-text-primary"}`}>Upload File</button>
+          <button onClick={() => setTab("link")} type="button" className={`flex-1 text-sm font-semibold py-2 rounded-md transition-colors ${tab === "link" ? "bg-warm-surface text-warm-text-primary shadow-sm" : "text-warm-text-secondary hover:text-warm-text-primary"}`}>Share Link</button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {tab === "upload" ? (
+            <div>
+              <label className="block text-sm font-medium text-warm-text-primary mb-1.5">Select File (Max 10MB)</label>
+              <div className="border-2 border-dashed border-warm-border rounded-lg p-6 text-center hover:bg-white transition-colors cursor-pointer relative h-32 flex items-center justify-center">
+                <input type="file" required onChange={(e) => setFile(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                <div className="text-warm-text-secondary text-sm">
+                  {file ? <span className="font-semibold text-warm-accent">{file.name}</span> : <span>Click or drag file to upload</span>}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-warm-text-primary mb-1.5">File Name</label>
+                <input type="text" required value={linkName} onChange={(e) => setLinkName(e.target.value)} placeholder="e.g. Logo Design v1" className="w-full px-4 py-3 rounded-lg border border-warm-border bg-warm-bg text-warm-text-primary text-sm placeholder:text-warm-text-secondary/60 focus:outline-none focus:border-warm-accent transition-colors" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-warm-text-primary mb-1.5">URL</label>
+                <input type="url" required value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="Paste Google Drive, Dropbox or any link..." className="w-full px-4 py-3 rounded-lg border border-warm-border bg-warm-bg text-warm-text-primary text-sm placeholder:text-warm-text-secondary/60 focus:outline-none focus:border-warm-accent transition-colors" />
+              </div>
+            </>
+          )}
+
+          <div className="flex gap-3 pt-4">
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-lg border border-warm-border text-warm-text-secondary text-sm font-semibold hover:bg-warm-bg transition-colors">Cancel</button>
+            <button type="submit" disabled={saving || (tab === "upload" && !file) || (tab === "link" && (!linkName || !linkUrl))} className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors disabled:opacity-50">
+              {saving && <Spinner />}{tab === "upload" ? "Upload" : "Save"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
