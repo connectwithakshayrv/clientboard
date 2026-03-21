@@ -1,11 +1,41 @@
-import Link from "next/link";
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Pricing — ClientBoard",
-  description:
-    "Simple, transparent pricing for Indian freelancers and creators. Start free, upgrade when you need more.",
-};
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase";
+
+/* ===========================
+   TYPES
+   =========================== */
+
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  prefill: { email: string };
+  theme: { color: string };
+  modal?: { ondismiss?: () => void };
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
 
 /* ===========================
    PLAN DATA
@@ -13,6 +43,7 @@ export const metadata: Metadata = {
 
 const plans = [
   {
+    key: "starter",
     name: "Starter",
     price: "₹399",
     period: "/mo",
@@ -24,10 +55,10 @@ const plans = [
       "Basic branding",
       "Email support",
     ],
-    cta: "Get Started",
     popular: false,
   },
   {
+    key: "pro",
     name: "Pro",
     price: "₹799",
     period: "/mo",
@@ -41,10 +72,10 @@ const plans = [
       "Priority support",
       "Invoice integration",
     ],
-    cta: "Get Started",
     popular: true,
   },
   {
+    key: "agency",
     name: "Agency",
     price: "₹1999",
     period: "/mo",
@@ -58,7 +89,6 @@ const plans = [
       "API access",
       "Dedicated account manager",
     ],
-    cta: "Get Started",
     popular: false,
   },
 ];
@@ -83,6 +113,126 @@ const faqs = [
    =========================== */
 
 export default function PricingPage() {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState("");
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  useEffect(() => {
+    async function fetchEmail() {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data.user?.email) setUserEmail(data.user.email);
+    }
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  function loadRazorpayScript(): Promise<boolean> {
+    return new Promise((resolve) => {
+      if (typeof window !== "undefined" && window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
+
+  async function handleCheckout(planKey: string, planName: string) {
+    setLoadingPlan(planKey);
+
+    // Check if user is logged in
+    const supabase = createClient();
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      window.location.href = `/signup?redirect=/pricing`;
+      return;
+    }
+
+    // Load Razorpay script
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      setToast({ message: "Failed to load payment gateway. Please try again.", type: "error" });
+      setLoadingPlan(null);
+      return;
+    }
+
+    // Create order via API
+    try {
+      const res = await fetch("/api/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planKey }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        setToast({ message: err.error || "Failed to create order", type: "error" });
+        setLoadingPlan(null);
+        return;
+      }
+
+      const { orderId, amount } = await res.json();
+
+      // Open Razorpay checkout
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        amount,
+        currency: "INR",
+        name: "ClientBoard",
+        description: `${planName} Plan - Monthly`,
+        order_id: orderId,
+        handler: async (response: RazorpayResponse) => {
+          // Verify payment
+          try {
+            const verifyRes = await fetch("/api/razorpay/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: planKey,
+              }),
+            });
+
+            if (verifyRes.ok) {
+              window.location.href = `/dashboard?payment=success&plan=${planKey}`;
+            } else {
+              setToast({ message: "Payment verification failed. Contact support.", type: "error" });
+              setLoadingPlan(null);
+            }
+          } catch {
+            setToast({ message: "Payment verification failed.", type: "error" });
+            setLoadingPlan(null);
+          }
+        },
+        prefill: { email: userEmail },
+        theme: { color: "#6366f1" },
+        modal: {
+          ondismiss: () => {
+            setLoadingPlan(null);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch {
+      setToast({ message: "Something went wrong. Please try again.", type: "error" });
+      setLoadingPlan(null);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* ===== NAVBAR ===== */}
@@ -115,20 +265,6 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      {/* ===== BANNER ===== */}
-      <div className="bg-primary-50 border-b border-primary-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <p className="text-center text-sm text-primary-700 font-medium">
-            <span className="inline-flex items-center gap-2">
-              <svg className="w-4 h-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-              </svg>
-              Payment setup coming soon — sign up free and we&apos;ll notify you when billing goes live.
-            </span>
-          </p>
-        </div>
-      </div>
-
       {/* ===== HERO ===== */}
       <section className="pt-16 sm:pt-24 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -150,9 +286,9 @@ export default function PricingPage() {
       <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-start">
-            {plans.map((plan, i) => (
+            {plans.map((plan) => (
               <div
-                key={i}
+                key={plan.key}
                 className={`relative rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
                   plan.popular
                     ? "border-2 border-primary-500 shadow-2xl shadow-primary-500/10 bg-white"
@@ -199,16 +335,27 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <Link
-                    href="/signup"
-                    className={`block w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  <button
+                    onClick={() => handleCheckout(plan.key, plan.name)}
+                    disabled={loadingPlan !== null}
+                    className={`block w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${
                       plan.popular
                         ? "gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/40 hover:-translate-y-0.5"
                         : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
                     }`}
                   >
-                    {plan.cta}
-                  </Link>
+                    {loadingPlan === plan.key ? (
+                      <span className="inline-flex items-center gap-2">
+                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : (
+                      "Get Started"
+                    )}
+                  </button>
                 </div>
               </div>
             ))}
@@ -275,6 +422,30 @@ export default function PricingPage() {
           </Link>
         </div>
       </footer>
+
+      {/* ===== TOAST ===== */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-fade-up">
+          <div
+            className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium ${
+              toast.type === "success"
+                ? "bg-emerald-600 text-white"
+                : "bg-red-600 text-white"
+            }`}
+          >
+            {toast.type === "success" ? (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+            )}
+            {toast.message}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

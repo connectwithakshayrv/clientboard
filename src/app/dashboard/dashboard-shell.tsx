@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
 /* ===========================
@@ -25,7 +25,20 @@ interface Toast {
   type: "success" | "error";
 }
 
+interface Subscription {
+  plan: string;
+  status: string;
+  current_period_end: string | null;
+}
+
 type Tab = "overview" | "clients" | "settings";
+
+const PLAN_CLIENT_LIMITS: Record<string, number> = {
+  free: 3,
+  starter: 3,
+  pro: Infinity,
+  agency: Infinity,
+};
 
 /* ===========================
    DASHBOARD SHELL
@@ -38,14 +51,20 @@ export default function DashboardShell({
   userEmail: string;
   userFullName: string;
 }) {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Modals
   const [showAddClient, setShowAddClient] = useState(false);
   const [showAddUpdate, setShowAddUpdate] = useState<string | null>(null); // client_id
+
+  const currentPlan = subscription?.plan || "free";
+  const clientLimit = PLAN_CLIENT_LIMITS[currentPlan] ?? 3;
 
   const addToast = useCallback((message: string, type: "success" | "error") => {
     const id = Math.random().toString(36).slice(2);
@@ -70,11 +89,45 @@ export default function DashboardShell({
     setLoading(false);
   }, [addToast]);
 
+  // Fetch subscription
+  useEffect(() => {
+    async function fetchSubscription() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("subscriptions")
+        .select("plan, status, current_period_end")
+        .single();
+      if (data) setSubscription(data);
+    }
+    fetchSubscription();
+  }, []);
+
   useEffect(() => {
     fetchClients();
   }, [fetchClients]);
 
+  // Handle payment success query params
+  useEffect(() => {
+    const payment = searchParams.get("payment");
+    const plan = searchParams.get("plan");
+    if (payment === "success" && plan) {
+      const planNames: Record<string, string> = { starter: "Starter", pro: "Pro", agency: "Agency" };
+      addToast(`You're now on the ${planNames[plan] || plan} plan! 🎉`, "success");
+      setSubscription({ plan, status: "active", current_period_end: null });
+      // Clean up URL
+      window.history.replaceState({}, "", "/dashboard");
+    }
+  }, [searchParams, addToast]);
+
   const activeCount = clients.filter((c) => c.status === "active").length;
+
+  function handleAddClient() {
+    if (clients.length >= clientLimit) {
+      setShowUpgradeModal(true);
+    } else {
+      setShowAddClient(true);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -142,7 +195,7 @@ export default function DashboardShell({
               <ClientsTab
                 clients={clients}
                 loading={loading}
-                onAddClient={() => setShowAddClient(true)}
+                onAddClient={handleAddClient}
                 onAddUpdate={(id) => setShowAddUpdate(id)}
                 addToast={addToast}
               />
@@ -152,6 +205,7 @@ export default function DashboardShell({
                 userEmail={userEmail}
                 userFullName={userFullName}
                 addToast={addToast}
+                subscription={subscription}
               />
             )}
           </div>
@@ -204,6 +258,43 @@ export default function DashboardShell({
           }}
           addToast={addToast}
         />
+      )}
+
+      {/* ===== UPGRADE MODAL ===== */}
+      {showUpgradeModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowUpgradeModal(false)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 animate-fade-up text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-50 text-amber-500 mb-5">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-display font-extrabold text-slate-900 mb-2">
+              Free plan limit reached
+            </h2>
+            <p className="text-sm text-slate-500 mb-6">
+              You&apos;ve reached the free plan limit ({clientLimit} clients).
+              Upgrade to Pro for unlimited clients.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <a
+                href="/pricing"
+                className="flex-1 py-3 rounded-xl gradient-bg text-white text-sm font-semibold shadow-md shadow-primary-500/20 hover:shadow-lg transition-all text-center"
+              >
+                Upgrade Now
+              </a>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* ===== TOASTS ===== */}
@@ -560,15 +651,31 @@ function SettingsTab({
   userEmail,
   userFullName,
   addToast,
+  subscription,
 }: {
   userEmail: string;
   userFullName: string;
   addToast: (msg: string, type: "success" | "error") => void;
+  subscription: Subscription | null;
 }) {
   const router = useRouter();
   const [fullName, setFullName] = useState(userFullName);
   const [saving, setSaving] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  const planName = subscription?.plan
+    ? subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + " Plan"
+    : "Free Plan";
+
+  const isPaid = subscription?.plan && subscription.plan !== "free";
+
+  const renewalDate = subscription?.current_period_end
+    ? new Date(subscription.current_period_end).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : null;
 
   async function handleSave() {
     setSaving(true);
@@ -650,11 +757,21 @@ function SettingsTab({
           <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
             Plan
           </h2>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wider">
-              Free Plan
+          <div className="flex items-center gap-3 mb-1">
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+              isPaid
+                ? "bg-primary-50 text-primary-600 border border-primary-200"
+                : "bg-slate-100 text-slate-600"
+            }`}>
+              {planName}
             </span>
           </div>
+          {renewalDate && (
+            <p className="text-xs text-slate-400 mb-4">
+              Renews on {renewalDate}
+            </p>
+          )}
+          {!renewalDate && <div className="mb-4" />}
           <a
             href="/pricing"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl gradient-bg text-white text-sm font-semibold shadow-md shadow-primary-500/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
@@ -662,7 +779,7 @@ function SettingsTab({
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
             </svg>
-            Upgrade Plan
+            {isPaid ? "Change Plan" : "Upgrade Plan"}
           </a>
         </div>
 
