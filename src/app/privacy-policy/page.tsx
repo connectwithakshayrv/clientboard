@@ -79,13 +79,13 @@ export default function PrivacyPolicyPage() {
               <li>Request deletion of your account and associated data.</li>
               <li>Export your data in a standard format.</li>
             </ul>
-            <p>To exercise any of these rights, email us at <strong className="text-warm-text-primary">hello@clientboard.app</strong>.</p>
+            <p>To exercise any of these rights, email us at <strong className="text-warm-text-primary">connectwithakshayrv@gmail.com</strong>.</p>
           </Section>
 
           <Section title="7. Contact Us">
             <p>If you have questions about this Privacy Policy, contact us:</p>
             <ul className="list-none space-y-1 text-warm-text-secondary text-sm">
-              <li>📧 Email: <strong className="text-warm-text-primary">hello@clientboard.app</strong></li>
+              <li>📧 Email: <strong className="text-warm-text-primary">connectwithakshayrv@gmail.com</strong></li>
               <li>🏢 Company: <strong className="text-warm-text-primary">ClientBoard, India</strong></li>
             </ul>
           </Section>

@@ -69,7 +69,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-warm-text-primary">Email</p>
-                    <a href="mailto:hello@clientboard.app" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">hello@clientboard.app</a>
+                    <a href="mailto:connectwithakshayrv@gmail.com" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">connectwithakshayrv@gmail.com</a>
                   </div>
                 </div>
 

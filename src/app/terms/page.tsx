@@ -74,7 +74,7 @@ export default function TermsPage() {
               <li>Your account is used for fraudulent or illegal activity.</li>
               <li>You fail to pay subscription fees for an extended period.</li>
             </ul>
-            <p>You may delete your account at any time by contacting us at <strong className="text-warm-text-primary">hello@clientboard.app</strong>. Upon deletion, your data will be permanently removed within 30 days.</p>
+            <p>You may delete your account at any time by contacting us at <strong className="text-warm-text-primary">connectwithakshayrv@gmail.com</strong>. Upon deletion, your data will be permanently removed within 30 days.</p>
           </Section>
 
           <Section title="7. Limitation of Liability">
@@ -86,7 +86,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="9. Contact">
-            <p>For questions about these Terms, contact us at <strong className="text-warm-text-primary">hello@clientboard.app</strong>.</p>
+            <p>For questions about these Terms, contact us at <strong className="text-warm-text-primary">connectwithakshayrv@gmail.com</strong>.</p>
           </Section>
         </div>
       </main>
