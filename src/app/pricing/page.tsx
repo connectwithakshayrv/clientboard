@@ -49,7 +49,7 @@ const plans = [
 
 const faqs = [
   { q: "Is there a free trial?", a: "Yes — 3 clients free forever. Upgrade when needed." },
-  { q: "Can I cancel anytime?", a: "Yes, cancel anytime with no questions asked." },
+
   { q: "Which payment methods are accepted?", a: "UPI, credit/debit cards, net banking, wallets." },
 ];
 

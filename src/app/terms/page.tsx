@@ -58,8 +58,8 @@ export default function TermsPage() {
               <li><strong className="text-warm-text-primary">Pro</strong> — ₹799/month (unlimited clients)</li>
               <li><strong className="text-warm-text-primary">Agency</strong> — ₹1,999/month (team + white label)</li>
             </ul>
-            <p>Payments are processed securely via Razorpay. Subscriptions renew automatically each month. You may cancel at any time — your access continues until the end of the billing period.</p>
-            <p>Refunds are available within 7 days of purchase. After 7 days, no refunds will be issued. See our <Link href="/refund-policy" className="text-warm-accent hover:text-warm-accent-hover font-medium">Refund Policy</Link> for details.</p>
+            <p>Payments are processed securely via Razorpay. Subscriptions renew automatically each month.</p>
+            <p><strong className="text-warm-text-primary">All payments are final and non-refundable.</strong> ClientBoard does not offer refunds under any circumstances. Please try the free plan before upgrading to a paid plan.</p>
           </Section>
 
           <Section title="5. Intellectual Property">

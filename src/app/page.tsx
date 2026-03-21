@@ -382,7 +382,6 @@ function Footer() {
             <ul className="space-y-3">
               <li><a href="/privacy-policy" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Privacy Policy</a></li>
               <li><a href="/terms" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Terms of Service</a></li>
-              <li><a href="/refund-policy" className="text-sm text-warm-text-secondary hover:text-warm-accent transition-colors">Refund Policy</a></li>
             </ul>
           </div>
         </div>

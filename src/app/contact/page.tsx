@@ -100,7 +100,6 @@ export default function ContactPage() {
               <ul className="space-y-2">
                 <li><Link href="/privacy-policy" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">Terms of Service</Link></li>
-                <li><Link href="/refund-policy" className="text-sm text-warm-accent hover:text-warm-accent-hover transition-colors">Refund Policy</Link></li>
               </ul>
             </div>
           </div>
