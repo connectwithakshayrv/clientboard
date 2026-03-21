@@ -142,8 +142,16 @@ export default function PricingPage() {
               <img src="/logo.svg" alt="COLLABILL" className="h-7 sm:h-8 w-auto transition-transform group-hover:scale-105" />
             </Link>
             <div className="flex items-center gap-3">
-              <Link href="/login" className="hidden sm:inline-flex text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Log in</Link>
-              <Link href="/signup" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors">Get Started Free</Link>
+              {authChecked && isLoggedIn ? (
+                <Link href="/dashboard" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors">
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" className="hidden sm:inline-flex text-sm font-medium text-warm-text-secondary hover:text-warm-accent transition-colors">Log in</Link>
+                  <Link href="/signup" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-warm-btn-primary-bg text-warm-btn-primary-text text-sm font-semibold hover:bg-warm-accent transition-colors">Get Started Free</Link>
+                </>
+              )}
             </div>
           </div>
         </div>
